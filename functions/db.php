@@ -25,15 +25,25 @@ try {
         full_name VARCHAR(100) NOT NULL,
         location_address VARCHAR(255) NOT NULL,
         youtube_channel VARCHAR(255) NOT NULL,
+        youtube_channel_name VARCHAR(255) NOT NULL,
         youtube_channel_changed BOOLEAN DEFAULT FALSE,
+        subscription_url VARCHAR(255) DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=INNODB;
     ";
 
     $pdo->exec($createTableSQL);
 
+    // Add youtube_channel_name column if it does not exist
+    $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_name VARCHAR(255) NOT NULL";
+    $pdo->exec($addColumnSQL);
+
     // Add youtube_channel_changed column if it does not exist
     $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_changed BOOLEAN DEFAULT FALSE";
+    $pdo->exec($addColumnSQL);
+
+    // Add subscription_url column if it does not exist
+    $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_url VARCHAR(255) DEFAULT NULL";
     $pdo->exec($addColumnSQL);
 
 } catch (\PDOException $e) {

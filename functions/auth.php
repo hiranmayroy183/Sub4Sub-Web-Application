@@ -19,7 +19,7 @@ function validateCsrfToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-function register($email, $password, $confirm_password) {
+function register($email, $password, $confirm_password, $youtube_channel_name) {
     global $pdo;
     if ($password !== $confirm_password) {
         return [false, "Passwords do not match."];
@@ -27,9 +27,9 @@ function register($email, $password, $confirm_password) {
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO users (email, password, youtube_channel_name) VALUES (?, ?, ?)");
     try {
-        $stmt->execute([$email, $hash]);
+        $stmt->execute([$email, $hash, $youtube_channel_name]);
         return [true, "Registration successful."];
     } catch (\PDOException $e) {
         if ($e->getCode() == 23000) { // Integrity constraint violation: 1062 Duplicate entry
@@ -80,7 +80,7 @@ function resetPassword($email) {
     }
 }
 
-function updateProfile($email, $full_name, $location_address, $youtube_channel) {
+function updateProfile($email, $full_name, $location_address, $youtube_channel, $youtube_channel_name) {
     global $pdo;
 
     $stmt = $pdo->prepare("SELECT youtube_channel, youtube_channel_changed FROM users WHERE email = ?");
@@ -95,8 +95,8 @@ function updateProfile($email, $full_name, $location_address, $youtube_channel) 
         return [false, "The YouTube channel URL must contain 'youtube.com'."];
     }
 
-    $stmt = $pdo->prepare("UPDATE users SET full_name = ?, location_address = ?, youtube_channel = ?, youtube_channel_changed = ? WHERE email = ?");
-    $stmt->execute([$full_name, $location_address, $youtube_channel, ($user['youtube_channel'] !== $youtube_channel) ? 1 : $user['youtube_channel_changed'], $email]);
+    $stmt = $pdo->prepare("UPDATE users SET full_name = ?, location_address = ?, youtube_channel = ?, youtube_channel_name = ?, youtube_channel_changed = ? WHERE email = ?");
+    $stmt->execute([$full_name, $location_address, $youtube_channel, $youtube_channel_name, ($user['youtube_channel'] !== $youtube_channel) ? 1 : $user['youtube_channel_changed'], $email]);
 
     return [true, "Profile updated successfully."];
 }
@@ -114,7 +114,7 @@ function changePassword($email, $new_password) {
 function getUserProfile($email) {
     global $pdo;
 
-    $stmt = $pdo->prepare("SELECT full_name, location_address, youtube_channel, youtube_channel_changed FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT full_name, location_address, youtube_channel, youtube_channel_name, youtube_channel_changed FROM users WHERE email = ?");
     $stmt->execute([$email]);
     return $stmt->fetch();
 }

@@ -21,16 +21,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'];
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
-            list($success, $message) = register($email, $password, $confirm_password);
+            $youtube_channel_name = $_POST['youtube_channel_name'];
+            list($success, $message) = register($email, $password, $confirm_password, $youtube_channel_name);
             $messageType = $success ? 'success' : 'error';
         } elseif (isset($_POST['update_profile'])) {
             $full_name = $_POST['full_name'];
             $location_address = $_POST['location_address'];
             $youtube_channel = $_POST['youtube_channel'];
+            $youtube_channel_name = $_POST['youtube_channel_name'];
             $new_password = $_POST['new_password'];
 
+            // Handle profile picture upload
+            if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'assets/images/';
+                $uploadFile = $uploadDir . basename($_FILES['profile_picture']['name']);
+
+                // Check file size (1.5MB maximum)
+                if ($_FILES['profile_picture']['size'] > 1500000) {
+                    $message = 'Profile picture is too large. Maximum size is 1.5MB.';
+                    $messageType = 'error';
+                } else {
+                    // Move uploaded file to the target directory
+                    if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadFile)) {
+                        // Save the file path in the database (assuming there's a profile_picture column in users table)
+                        $stmt = $pdo->prepare("UPDATE users SET profile_picture = ? WHERE email = ?");
+                        $stmt->execute([$uploadFile, $_SESSION['email']]);
+                    } else {
+                        $message = 'Failed to upload profile picture.';
+                        $messageType = 'error';
+                    }
+                }
+            }
+
             $email = $_SESSION['email'];
-            list($success, $message) = updateProfile($email, $full_name, $location_address, $youtube_channel);
+            list($success, $message) = updateProfile($email, $full_name, $location_address, $youtube_channel, $youtube_channel_name);
             $messageType = $success ? 'success' : 'error';
 
             if (!empty($new_password)) {
@@ -40,6 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if ($success) {
                 $userProfile = getUserProfile($email);
+            }
+        } elseif (isset($_POST['verify_subscription'])) {
+            $subscription_url = $_POST['subscription_verification_url'];
+
+            // Verify the subscription URL
+            if (strpos($subscription_url, 'roydigitalnexus.com') === false) {
+                $message = '<p class="alert alert-danger">Please use <a href="https://roydigitalnexus.com/">roydigitalnexus.com</a> to host your images for free</p>';
+                $messageType = 'error';
+            } else {
+                // Save the URL to the database
+                $stmt = $pdo->prepare("UPDATE users SET subscription_url = ? WHERE email = ?");
+                $stmt->execute([$subscription_url, $_SESSION['email']]);
+                $message = 'Subscription URL successfully verified and saved.';
+                $messageType = 'success';
             }
         }
 
@@ -82,7 +120,7 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Update Profile</h3>
-                        <form id="updateProfileForm" action="" method="post">
+                        <form id="updateProfileForm" action="" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Full Name</label>
@@ -92,19 +130,20 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                                 <label for="locationAddress" class="form-label">Location Address</label>
                                 <input type="text" class="form-control" id="locationAddress" name="location_address" value="<?php echo htmlspecialchars($userProfile['location_address']); ?>" required>
                             </div>
-<!-- YouTube Channel URL Section -->
-<div class="mb-3">
-    <label for="youtubeChannel" class="form-label">YouTube Channel URL</label>
-    <input type="url" class="form-control" id="youtubeChannel" name="youtube_channel"
-           value="<?php echo htmlspecialchars($userProfile['youtube_channel']); ?>"
-           <?php if ($userProfile['youtube_channel_changed']): ?> disabled title="You can only change the YouTube channel URL once." <?php endif; ?>
-           required>
-    <?php if ($userProfile['youtube_channel_changed']): ?>
-        <small id="youtubeChannelTooltip" class="form-text text-muted">You can only change the YouTube channel URL once.</small>
-    <?php endif; ?>
-</div>
-
-
+                            <div class="mb-3">
+                                <label for="youtubeChannel" class="form-label">YouTube Channel URL</label>
+                                <input type="url" class="form-control" id="youtubeChannel" name="youtube_channel"
+                                       value="<?php echo htmlspecialchars($userProfile['youtube_channel']); ?>"
+                                       <?php if ($userProfile['youtube_channel_changed']): ?> disabled title="You can only change the YouTube channel URL once." <?php endif; ?>
+                                       required>
+                                <?php if ($userProfile['youtube_channel_changed']): ?>
+                                    <small id="youtubeChannelTooltip" class="form-text text-muted">You can only change the YouTube channel URL once.</small>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="youtubeChannelName" class="form-label">YouTube Channel Name</label>
+                                <input type="text" class="form-control" id="youtubeChannelName" name="youtube_channel_name" value="<?php echo htmlspecialchars($userProfile['youtube_channel_name']); ?>" required>
+                            </div>
                             <div class="mb-3">
                                 <label for="currentUsername" class="form-label">Username (Read-only)</label>
                                 <input type="text" class="form-control" id="currentUsername" value="<?php echo getUsernameFromEmail($_SESSION['email']); ?>" readonly>
@@ -118,6 +157,25 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                                 <input type="password" class="form-control" id="newPassword" name="new_password">
                             </div>
                             <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <img src="https://via.placeholder.com/280x280" alt="Profile Picture" class="rounded-circle" id="profilePicture" width="280" height="280">
+                            <input type="file" class="form-control mt-2" id="profilePictureInput" name="profile_picture" accept="image/*">
+                        </div>
+                        <form id="subscriptionVerificationForm" action="" method="post">
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                            <div class="mb-3">
+                                <label for="subscriptionVerificationUrl" class="form-label">Verify Your Subscriptions:</label>
+                                <input type="url" class="form-control" id="subscriptionVerificationUrl" name="subscription_verification_url" placeholder="Enter URL to verify subscriptions">
+                                    <p>Note: Use <a href='https://roydigitalnexus.com/'>roydigitalnexus.com</a> to host your images for free.</p>
+                            </div>
+                            <button type="submit" name="verify_subscription" class="btn btn-primary">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -174,6 +232,10 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                             <div class="mb-3">
                                 <label for="registerConfirmPassword" class="form-label">Confirm Password</label>
                                 <input type="password" class="form-control" id="registerConfirmPassword" name="confirm_password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registerYoutubeChannelName" class="form-label">YouTube Channel Name</label>
+                                <input type="text" class="form-control" id="registerYoutubeChannelName" name="youtube_channel_name" required>
                             </div>
                             <button type="submit" name="register" class="btn btn-primary">Register</button>
                         </form>
@@ -245,7 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Custom tooltip for YouTube channel field
     const youtubeChannel = document.getElementById('youtubeChannel');
     const youtubeChannelTooltip = document.getElementById('youtubeChannelTooltip');
-    const youtubeChannelName = document.getElementById('youtubeChannelName');
 
     if (youtubeChannel && youtubeChannelTooltip) {
         youtubeChannel.addEventListener('mouseover', function() {
@@ -256,7 +317,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
 </script>
 
 <?php include 'functions/footer.php'; ?>
