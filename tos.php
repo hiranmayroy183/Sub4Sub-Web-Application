@@ -3,7 +3,7 @@ include 'functions/header.php';
 include 'functions/db.php';
 
 // Fetch the current content
-$stmt = $pdo->prepare("SELECT content FROM about_content WHERE id = 1");
+$stmt = $pdo->prepare("SELECT content FROM tos_content WHERE id = 1");
 $stmt->execute();
 $content = $stmt->fetchColumn();
 ?>

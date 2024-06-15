@@ -114,8 +114,9 @@ function changePassword($email, $new_password) {
 function getUserProfile($email) {
     global $pdo;
 
-    $stmt = $pdo->prepare("SELECT full_name, location_address, youtube_channel, youtube_channel_name, youtube_channel_changed FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("SELECT full_name, location_address, youtube_channel, youtube_channel_name, youtube_channel_changed, subscription_urls, profile_picture FROM users WHERE email = ?");
     $stmt->execute([$email]);
     return $stmt->fetch();
 }
+
 ?>

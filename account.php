@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Handle profile picture upload
             if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'assets/images/';
+                $uploadDir = 'uploads/';
                 $uploadFile = $uploadDir . basename($_FILES['profile_picture']['name']);
 
                 // Check file size (1.5MB maximum)
@@ -43,7 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } else {
                     // Move uploaded file to the target directory
                     if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadFile)) {
-                        // Save the file path in the database (assuming there's a profile_picture column in users table)
+                        // Delete the old profile picture if it exists
+                        $stmt = $pdo->prepare("SELECT profile_picture FROM users WHERE email = ?");
+                        $stmt->execute([$_SESSION['email']]);
+                        $oldPicture = $stmt->fetchColumn();
+                        if ($oldPicture && file_exists($oldPicture) && $oldPicture != 'https://via.placeholder.com/280x280') {
+                            unlink($oldPicture);
+                        }
+                        // Save the file path in the database
                         $stmt = $pdo->prepare("UPDATE users SET profile_picture = ? WHERE email = ?");
                         $stmt->execute([$uploadFile, $_SESSION['email']]);
                     } else {
@@ -66,18 +73,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $userProfile = getUserProfile($email);
             }
         } elseif (isset($_POST['verify_subscription'])) {
-            $subscription_url = $_POST['subscription_verification_url'];
+            $subscription_urls = array_filter(array_map('trim', explode("\n", $_POST['subscription_verification_urls'])));
 
-            // Verify the subscription URL
-            if (strpos($subscription_url, 'roydigitalnexus.com') === false) {
-                $message = '<p class="alert alert-danger">Please use <a href="https://roydigitalnexus.com/">roydigitalnexus.com</a> to host your images for free</p>';
-                $messageType = 'error';
-            } else {
-                // Save the URL to the database
-                $stmt = $pdo->prepare("UPDATE users SET subscription_url = ? WHERE email = ?");
-                $stmt->execute([$subscription_url, $_SESSION['email']]);
-                $message = 'Subscription URL successfully verified and saved.';
-                $messageType = 'success';
+            // Validate URLs
+            foreach ($subscription_urls as $url) {
+                if (strpos($url, 'https://roydigitalnexus.com/') === false) {
+                    $message = 'All images must be hosted on https://roydigitalnexus.com/';
+                    $messageType = 'error';
+                    break;
+                }
+            }
+
+            if ($messageType !== 'error') {
+                // Fetch existing URLs
+                $stmt = $pdo->prepare("SELECT subscription_urls FROM users WHERE email = ?");
+                $stmt->execute([$_SESSION['email']]);
+                $existing_urls = json_decode($stmt->fetchColumn() ?: '[]', true);
+
+                // Check total URLs
+                if (count($existing_urls) + count($subscription_urls) > 20) {
+                    $message = 'You can only store up to 20 URLs.';
+                    $messageType = 'error';
+                } else {
+                    // Merge and remove duplicates
+                    $all_urls = array_unique(array_merge($existing_urls, $subscription_urls));
+                    $stmt = $pdo->prepare("UPDATE users SET subscription_urls = ? WHERE email = ?");
+                    $stmt->execute([json_encode($all_urls), $_SESSION['email']]);
+                    $message = 'Subscription URLs successfully saved.';
+                    $messageType = 'success';
+                }
             }
         }
 
@@ -94,7 +118,6 @@ function getUsernameFromEmail($email) {
 
 $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
 ?>
-
 <div class="container">
     <?php if (isLoggedIn()): ?>
         <div class="row mt-5">
@@ -107,7 +130,20 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                     </form>
                 </div>
             </div>
+
+            <div class="alert alert-warning" role="alert">
+                    <p>It is neccessary to complete your account information to reach other people and get subscribed.</p>
+                    <p>Please fill out the form below.</p>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Update Account</h3>
+                        <form id="updateAccountForm" action="" method="post" enctype="multipart/form-data">
+            </div>
         </div>
+
 
         <?php if ($message): ?>
             <div class="alert alert-<?php echo $messageType; ?>">
@@ -164,16 +200,21 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
-                        <div class="text-center mb-3">
-                            <img src="https://via.placeholder.com/280x280" alt="Profile Picture" class="rounded-circle" id="profilePicture" width="280" height="280">
-                            <input type="file" class="form-control mt-2" id="profilePictureInput" name="profile_picture" accept="image/*">
+                    <p class="alert alert-danger"><b>Unfortunately, we cannot currently upload your profile picture. However, we will provide this option as soon as we can!</b></p>
+                    <div class="text-center mb-3">
+                            <img src="<?php echo htmlspecialchars(isset($userProfile['profile_picture']) ? $userProfile['profile_picture'] : 'https://via.placeholder.com/280x280'); ?>" alt="Profile Picture" class="rounded-circle" id="profilePicture" width="280" height="280">
+                            <form id="profilePictureForm" action="" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                <input type="file" class="form-control mt-2" id="profilePictureInput" name="profile_picture" accept="image/*">
+                                <button type="submit" name="update_profile_picture" class="btn btn-primary mt-2">Update Picture</button>
+                            </form>
                         </div>
                         <form id="subscriptionVerificationForm" action="" method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
-                                <label for="subscriptionVerificationUrl" class="form-label">Verify Your Subscriptions:</label>
-                                <input type="url" class="form-control" id="subscriptionVerificationUrl" name="subscription_verification_url" placeholder="Enter URL to verify subscriptions">
-                                    <p>Note: Use <a href='https://roydigitalnexus.com/'>roydigitalnexus.com</a> to host your images for free.</p>
+                                <label for="subscriptionVerificationUrls" class="form-label">Verify Your Subscriptions:</label>
+                                <textarea class="form-control" id="subscriptionVerificationUrls" name="subscription_verification_urls" rows="4" placeholder="Enter URLs to verify subscriptions, one per line"><?php echo htmlspecialchars(isset($userProfile['subscription_urls']) ? implode("\n", json_decode($userProfile['subscription_urls'], true)) : ''); ?></textarea>
+                                <p>Note: Use <a href='https://roydigitalnexus.com/'>roydigitalnexus.com</a> to host your images for free.</p>
                             </div>
                             <button type="submit" name="verify_subscription" class="btn btn-primary">Submit</button>
                         </form>
@@ -248,6 +289,21 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Numbering and limit function for the subscription URLs textarea
+    const subscriptionTextarea = document.getElementById('subscriptionVerificationUrls');
+    subscriptionTextarea.addEventListener('input', function() {
+        let lines = subscriptionTextarea.value.split('\n');
+        if (lines.length > 20) {
+            subscriptionTextarea.value = lines.slice(0, 20).join('\n');
+            subscriptionTextarea.setAttribute('readonly', 'readonly');
+        } else {
+            for (let i = 0; i < lines.length; i++) {
+                lines[i] = `${i + 1}. ${lines[i].replace(/^\d+\.\s*/, '')}`;
+            }
+            subscriptionTextarea.value = lines.join('\n');
+        }
+    });
+
     // Form validation function
     function validateForm(form) {
         const email = form.querySelector('[name="email"]');

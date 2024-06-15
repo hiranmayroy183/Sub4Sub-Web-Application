@@ -27,24 +27,117 @@ try {
         youtube_channel VARCHAR(255) NOT NULL,
         youtube_channel_name VARCHAR(255) NOT NULL,
         youtube_channel_changed BOOLEAN DEFAULT FALSE,
-        subscription_url VARCHAR(255) DEFAULT NULL,
+        subscription_urls TEXT DEFAULT NULL,
+        profile_picture VARCHAR(255) DEFAULT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=INNODB;
     ";
 
     $pdo->exec($createTableSQL);
 
-    // Add youtube_channel_name column if it does not exist
-    $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_name VARCHAR(255) NOT NULL";
-    $pdo->exec($addColumnSQL);
+    // Add missing columns if they do not exist
+    $addColumnSQLs = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_name VARCHAR(255) NOT NULL",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_changed BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_urls TEXT DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(255) DEFAULT NULL"
+    ];
 
-    // Add youtube_channel_changed column if it does not exist
-    $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_changed BOOLEAN DEFAULT FALSE";
-    $pdo->exec($addColumnSQL);
+    foreach ($addColumnSQLs as $sql) {
+        $pdo->exec($sql);
+    }
 
-    // Add subscription_url column if it does not exist
-    $addColumnSQL = "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_url VARCHAR(255) DEFAULT NULL";
-    $pdo->exec($addColumnSQL);
+    // Create about page content table
+    $createAboutTableSQL = "
+    CREATE TABLE IF NOT EXISTS about_content (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createAboutTableSQL);
+
+    // Insert initial content if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM about_content");
+    if ($stmt->fetchColumn() == 0) {
+        $initialContent = "<h1>About Us</h1><p>Welcome to our website. Here is some information about us.</p>";
+        $pdo->prepare("INSERT INTO about_content (content) VALUES (?)")->execute([$initialContent]);
+    }
+
+    // Create contact page content table
+    $createContactTableSQL = "
+    CREATE TABLE IF NOT EXISTS contact_content (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createContactTableSQL);
+
+    // Insert initial content if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM contact_content");
+    if ($stmt->fetchColumn() == 0) {
+        $initialContent = "<h1>Contact Us</h1><p>Here is how you can contact us.</p>";
+        $pdo->prepare("INSERT INTO contact_content (content) VALUES (?)")->execute([$initialContent]);
+    }
+
+    // Create terms of service content table
+    $createTOSTableSQL = "
+    CREATE TABLE IF NOT EXISTS tos_content (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createTOSTableSQL);
+
+    // Insert initial content if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM tos_content");
+    if ($stmt->fetchColumn() == 0) {
+        $initialContent = "<h1>Terms of Service</h1><p>Here are our terms of service.</p>";
+        $pdo->prepare("INSERT INTO tos_content (content) VALUES (?)")->execute([$initialContent]);
+    }
+
+    // Create privacy policy content table
+    $createPrivacyTableSQL = "
+    CREATE TABLE IF NOT EXISTS privacy_content (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createPrivacyTableSQL);
+
+    // Insert initial content if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM privacy_content");
+    if ($stmt->fetchColumn() == 0) {
+        $initialContent = "<h1>Privacy Policy</h1><p>Here is our privacy policy.</p>";
+        $pdo->prepare("INSERT INTO privacy_content (content) VALUES (?)")->execute([$initialContent]);
+    }
+
+    // Create admin table
+    $createAdminTableSQL = "
+    CREATE TABLE IF NOT EXISTS admin (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createAdminTableSQL);
+
+    // Insert initial admin user if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
+    if ($stmt->fetchColumn() == 0) {
+        $initialAdminUsername = 'admin';
+        $initialAdminPassword = password_hash('password', PASSWORD_DEFAULT);
+        $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)")->execute([$initialAdminUsername, $initialAdminPassword]);
+    }
 
 } catch (\PDOException $e) {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
