@@ -29,6 +29,7 @@ try {
         youtube_channel_changed BOOLEAN DEFAULT FALSE,
         subscription_urls TEXT DEFAULT NULL,
         profile_picture VARCHAR(255) DEFAULT NULL,
+        banned BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=INNODB;
     ";
@@ -40,7 +41,8 @@ try {
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_name VARCHAR(255) NOT NULL",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS youtube_channel_changed BOOLEAN DEFAULT FALSE",
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_urls TEXT DEFAULT NULL",
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(255) DEFAULT NULL"
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(255) DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS banned BOOLEAN DEFAULT FALSE"
     ];
 
     foreach ($addColumnSQLs as $sql) {
@@ -55,12 +57,30 @@ try {
         youtube_channel_name VARCHAR(255) NOT NULL,
         youtube_channel_link VARCHAR(255) NOT NULL,
         image_path VARCHAR(255) NOT NULL,
+        validated BOOLEAN DEFAULT FALSE,
+        reverify BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)
     ) ENGINE=INNODB;
     ";
 
     $pdo->exec($createUserUploadsTableSQL);
+
+    // Update existing table to add reverify column if it doesn't exist
+    $pdo->exec("ALTER TABLE user_uploads ADD COLUMN IF NOT EXISTS reverify BOOLEAN DEFAULT FALSE");
+
+    // Create notifications table if it doesn't exist
+    $createNotificationsTableSQL = "
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createNotificationsTableSQL);
 
     // Create about page content table
     $createAboutTableSQL = "
