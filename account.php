@@ -31,35 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $youtube_channel_name = $_POST['youtube_channel_name'];
             $new_password = $_POST['new_password'];
 
-            // Handle profile picture upload
-            if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'uploads/';
-                $uploadFile = $uploadDir . basename($_FILES['profile_picture']['name']);
-
-                // Check file size (1.5MB maximum)
-                if ($_FILES['profile_picture']['size'] > 1500000) {
-                    $message = 'Profile picture is too large. Maximum size is 1.5MB.';
-                    $messageType = 'error';
-                } else {
-                    // Move uploaded file to the target directory
-                    if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadFile)) {
-                        // Delete the old profile picture if it exists
-                        $stmt = $pdo->prepare("SELECT profile_picture FROM users WHERE email = ?");
-                        $stmt->execute([$_SESSION['email']]);
-                        $oldPicture = $stmt->fetchColumn();
-                        if ($oldPicture && file_exists($oldPicture) && $oldPicture != 'https://via.placeholder.com/280x280') {
-                            unlink($oldPicture);
-                        }
-                        // Save the file path in the database
-                        $stmt = $pdo->prepare("UPDATE users SET profile_picture = ? WHERE email = ?");
-                        $stmt->execute([$uploadFile, $_SESSION['email']]);
-                    } else {
-                        $message = 'Failed to upload profile picture.';
-                        $messageType = 'error';
-                    }
-                }
-            }
-
             $email = $_SESSION['email'];
             list($success, $message) = updateProfile($email, $full_name, $location_address, $youtube_channel, $youtube_channel_name);
             $messageType = $success ? 'success' : 'error';
@@ -132,7 +103,7 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
             </div>
 
             <div class="alert alert-warning" role="alert">
-                    <p>It is neccessary to complete your account information to reach other people and get subscribed.</p>
+                    <p>It is necessary to complete your account information to reach other people and get subscribed.</p>
                     <p>Please fill out the form below.</p>
             </div>
 
@@ -140,10 +111,9 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Update Account</h3>
-                        <form id="updateAccountForm" action="" method="post" enctype="multipart/form-data">
+                        <form id="updateAccountForm" action="" method="post">
             </div>
         </div>
-
 
         <?php if ($message): ?>
             <div class="alert alert-<?php echo $messageType; ?>">
@@ -156,7 +126,7 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Update Profile</h3>
-                        <form id="updateProfileForm" action="" method="post" enctype="multipart/form-data">
+                        <form id="updateProfileForm" action="" method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Full Name</label>
@@ -199,24 +169,14 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
             </div>
             <div class="col-md-6">
                 <div class="card">
+                    <h4 class="text-center">All the channels you have subscribed to!</h4>
                     <div class="card-body">
-                    <p class="alert alert-danger"><b>Unfortunately, we cannot currently upload your profile picture. However, we will provide this option as soon as we can!</b></p>
-                    <div class="text-center mb-3">
-                            <img src="<?php echo htmlspecialchars(isset($userProfile['profile_picture']) ? $userProfile['profile_picture'] : 'https://via.placeholder.com/280x280'); ?>" alt="Profile Picture" class="rounded-circle" id="profilePicture" width="280" height="280">
-                            <form id="profilePictureForm" action="" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                <input type="file" class="form-control mt-2" id="profilePictureInput" name="profile_picture" accept="image/*">
-                                <button type="submit" name="update_profile_picture" class="btn btn-primary mt-2">Update Picture</button>
-                            </form>
-                        </div>
                         <form id="subscriptionVerificationForm" action="" method="post">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
                                 <label for="subscriptionVerificationUrls" class="form-label">Verify Your Subscriptions:</label>
-                                <textarea class="form-control" id="subscriptionVerificationUrls" name="subscription_verification_urls" rows="4" placeholder="Enter URLs to verify subscriptions, one per line"><?php echo htmlspecialchars(isset($userProfile['subscription_urls']) ? implode("\n", json_decode($userProfile['subscription_urls'], true)) : ''); ?></textarea>
-                                <p>Note: Use <a href='https://roydigitalnexus.com/'>roydigitalnexus.com</a> to host your images for free.</p>
+                                <textarea readonly class="form-control" id="subscriptionVerificationUrls" name="subscription_verification_urls" rows="4" placeholder="The channels you subscribed to were found to be genuine."><?php echo htmlspecialchars(isset($userProfile['subscription_urls']) ? implode("\n", json_decode($userProfile['subscription_urls'], true)) : ''); ?></textarea>
                             </div>
-                            <button type="submit" name="verify_subscription" class="btn btn-primary">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -289,19 +249,19 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Numbering and limit function for the subscription URLs textarea
-    const subscriptionTextarea = document.getElementById('subscriptionVerificationUrls');
-    subscriptionTextarea.addEventListener('input', function() {
-        let lines = subscriptionTextarea.value.split('\n');
-        if (lines.length > 20) {
-            subscriptionTextarea.value = lines.slice(0, 20).join('\n');
-            subscriptionTextarea.setAttribute('readonly', 'readonly');
-        } else {
-            for (let i = 0; i < lines.length; i++) {
-                lines[i] = `${i + 1}. ${lines[i].replace(/^\d+\.\s*/, '')}`;
-            }
-            subscriptionTextarea.value = lines.join('\n');
-        }
+    // // Numbering and limit function for the subscription URLs textarea
+    // const subscriptionTextarea = document.getElementById('subscriptionVerificationUrls');
+    // subscriptionTextarea.addEventListener('input', function() {
+    //     let lines = subscriptionTextarea.value.split('\n');
+    //     if (lines.length > 20) {
+    //         subscriptionTextarea.value = lines.slice(0, 20).join('\n');
+    //         subscriptionTextarea.setAttribute('readonly', 'readonly');
+    //     } else {
+    //         for (let i = 0; i < lines.length; i++) {
+    //             lines[i] = `${i + 1}. ${lines[i].replace(/^\d+\.\s*/, '')}`;
+    //         }
+    //         subscriptionTextarea.value = lines.join('\n');
+    //     }
     });
 
     // Form validation function
@@ -360,18 +320,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!validateForm(this)) event.preventDefault();
     });
 
-    // Custom tooltip for YouTube channel field
-    const youtubeChannel = document.getElementById('youtubeChannel');
-    const youtubeChannelTooltip = document.getElementById('youtubeChannelTooltip');
+    // // Custom tooltip for YouTube channel field
+    // const youtubeChannel = document.getElementById('youtubeChannel');
+    // const youtubeChannelTooltip = document.getElementById('youtubeChannelTooltip');
 
-    if (youtubeChannel && youtubeChannelTooltip) {
-        youtubeChannel.addEventListener('mouseover', function() {
-            youtubeChannelTooltip.style.display = 'block';
-        });
-        youtubeChannel.addEventListener('mouseout', function() {
-            youtubeChannelTooltip.style.display = 'none';
-        });
-    }
+    // if (youtubeChannel && youtubeChannelTooltip) {
+    //     youtubeChannel.addEventListener('mouseover', function() {
+    //         youtubeChannelTooltip.style.display = 'block';
+    //     });
+    //     youtubeChannel.addEventListener('mouseout', function() {
+    //         youtubeChannelTooltip.style.display = 'none';
+    //     });
+    // }
 });
 </script>
 

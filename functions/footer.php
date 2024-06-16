@@ -1,22 +1,3 @@
-  <style>
-    html {
-      position: relative;
-      min-height: 100%;
-    }
-    body {
-      margin-bottom: 100px; /* Margin bottom by footer height */
-    }
-    .footer {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100px; /* Set the fixed height of your footer here */
-      background-color: #f5f5f5; /* Adjust as per your design */
-    }
-  </style>
-
-
-
 
 <footer class="footer py-3">
     <div class="container">

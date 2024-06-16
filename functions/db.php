@@ -101,19 +101,27 @@ try {
         $pdo->prepare("INSERT INTO tos_content (content) VALUES (?)")->execute([$initialContent]);
     }
 
-    // Create privacy policy content table
-    $createPrivacyTableSQL = "
-    CREATE TABLE IF NOT EXISTS privacy_content (
+    // Create faqs content table
+    $createFAQTableSQL = "
+    CREATE TABLE IF NOT EXISTS faq_content (
         id INT AUTO_INCREMENT PRIMARY KEY,
         content TEXT NOT NULL,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=INNODB;
     ";
 
-    
-    // Create faqs content table
+    $pdo->exec($createFAQTableSQL);
+
+    // Insert initial content if not exists
+    $stmt = $pdo->query("SELECT COUNT(*) FROM faq_content");
+    if ($stmt->fetchColumn() == 0) {
+        $initialContent = "<h1>FAQs</h1><p>Here are some frequently asked questions.</p>";
+        $pdo->prepare("INSERT INTO faq_content (content) VALUES (?)")->execute([$initialContent]);
+    }
+
+    // Create privacy policy content table
     $createPrivacyTableSQL = "
-    CREATE TABLE IF NOT EXISTS faq_content (
+    CREATE TABLE IF NOT EXISTS privacy_content (
         id INT AUTO_INCREMENT PRIMARY KEY,
         content TEXT NOT NULL,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
