@@ -23,7 +23,7 @@ function isAdminLoggedIn() {
 <body>
     <div class="container">
     <div class="pg-lib-item-box" data-pgc-field="component">
-        <nav class="bg-white navbar navbar-expand-lg navbar-light pg-lib-item py-lg-1 text-uppercase"> <a class="fw-bold navbar-brand text-primary" href="#">SUB4SUB</a> 
+        <nav class="bg-white navbar navbar-expand-lg navbar-light pg-lib-item py-lg-1 text-uppercase"> <a class="fw-bold navbar-brand text-primary" href="index.php">SUB4SUB</a> 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown-5" aria-controls="navbarNavDropdown-5" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
             </button>                         
             <div class="collapse navbar-collapse " id="navbarNavDropdown-5"> 

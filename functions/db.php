@@ -110,6 +110,16 @@ try {
     ) ENGINE=INNODB;
     ";
 
+    
+    // Create faqs content table
+    $createPrivacyTableSQL = "
+    CREATE TABLE IF NOT EXISTS faq_content (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        content TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    ";
+
     $pdo->exec($createPrivacyTableSQL);
 
     // Insert initial content if not exists
