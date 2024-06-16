@@ -4,7 +4,7 @@ include 'functions/auth.php';
 
 if (!isLoggedIn()) {
     echo '
-    <div class="container mt-3">
+    <div class=".ml-1 container mt-3">
         <div class="alert alert-warning" role="alert">
             You must be logged in to access this page. Please <a href="account.php" class="alert-link">login</a> or <a href="account.php" class="alert-link">register</a>.
         </div>
