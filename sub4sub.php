@@ -4,7 +4,7 @@ include 'functions/auth.php';
 
 if (!isLoggedIn()) {
     echo '
-    <div class="container mt-3">
+    <div class=".ml-1 container mt-3">
         <div class="alert alert-warning" role="alert">
             You must be logged in to access this page. Please <a href="account.php" class="alert-link">login</a> or <a href="account.php" class="alert-link">register</a>.
         </div>
@@ -15,10 +15,7 @@ if (!isLoggedIn()) {
 
 global $pdo;
 
-// Exclude currently logged-in user's information
-$current_user_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT email, youtube_channel_name, youtube_channel FROM users WHERE id != ? LIMIT 20");
-$stmt->execute([$current_user_id]);
+$stmt = $pdo->query("SELECT email, youtube_channel_name, youtube_channel FROM users");
 $users = $stmt->fetchAll();
 ?>
 
@@ -45,17 +42,11 @@ $users = $stmt->fetchAll();
                     <td><?= htmlspecialchars($username) ?></td>
                     <td><?= htmlspecialchars($channelName) ?></td>
                     <td><a href="<?= htmlspecialchars($channelURL) ?>" target="_blank"><button type="button" class="btn btn-primary">Open</button></a></td>
-                    <td><a href="verify.php" onclick="setRedirectFlag()" target="_blank"><button type="button" class="btn btn-secondary">Verify</button></a></td>
+                    <td><a href="verify.php" target="_blank" ><button type="button" class="btn btn-secondary">Verify</button></a></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
-<script>
-function setRedirectFlag() {
-    <?php $_SESSION['redirected_from_sub4sub'] = true; ?>
-}
-</script>
 
 <?php include 'functions/footer.php'; ?>

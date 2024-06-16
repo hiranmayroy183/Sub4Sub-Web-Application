@@ -17,7 +17,7 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 
     // Create users table if it doesn't exist
-    $createUsersTableSQL = "
+    $createTableSQL = "
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
@@ -33,7 +33,7 @@ try {
     ) ENGINE=INNODB;
     ";
 
-    $pdo->exec($createUsersTableSQL);
+    $pdo->exec($createTableSQL);
 
     // Add missing columns if they do not exist
     $addColumnSQLs = [
@@ -46,21 +46,6 @@ try {
     foreach ($addColumnSQLs as $sql) {
         $pdo->exec($sql);
     }
-
-    // Create user_uploads table if it doesn't exist
-    $createUserUploadsTableSQL = "
-    CREATE TABLE IF NOT EXISTS user_uploads (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        youtube_channel_name VARCHAR(255) NOT NULL,
-        youtube_channel_link VARCHAR(255) NOT NULL,
-        image_path VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    ) ENGINE=INNODB;
-    ";
-
-    $pdo->exec($createUserUploadsTableSQL);
 
     // Create about page content table
     $createAboutTableSQL = "
@@ -125,17 +110,9 @@ try {
     ) ENGINE=INNODB;
     ";
 
-    $pdo->exec($createPrivacyTableSQL);
-
-    // Insert initial content if not exists
-    $stmt = $pdo->query("SELECT COUNT(*) FROM privacy_content");
-    if ($stmt->fetchColumn() == 0) {
-        $initialContent = "<h1>Privacy Policy</h1><p>Here is our privacy policy.</p>";
-        $pdo->prepare("INSERT INTO privacy_content (content) VALUES (?)")->execute([$initialContent]);
-    }
-
+    
     // Create faqs content table
-    $createFAQTableSQL = "
+    $createPrivacyTableSQL = "
     CREATE TABLE IF NOT EXISTS faq_content (
         id INT AUTO_INCREMENT PRIMARY KEY,
         content TEXT NOT NULL,
@@ -143,13 +120,13 @@ try {
     ) ENGINE=INNODB;
     ";
 
-    $pdo->exec($createFAQTableSQL);
+    $pdo->exec($createPrivacyTableSQL);
 
     // Insert initial content if not exists
-    $stmt = $pdo->query("SELECT COUNT(*) FROM faq_content");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM privacy_content");
     if ($stmt->fetchColumn() == 0) {
-        $initialContent = "<h1>FAQ</h1><p>Here are some frequently asked questions.</p>";
-        $pdo->prepare("INSERT INTO faq_content (content) VALUES (?)")->execute([$initialContent]);
+        $initialContent = "<h1>Privacy Policy</h1><p>Here is our privacy policy.</p>";
+        $pdo->prepare("INSERT INTO privacy_content (content) VALUES (?)")->execute([$initialContent]);
     }
 
     // Create admin table
