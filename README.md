@@ -37,12 +37,6 @@ All you have to do is
 
 # Preview
 
-## Admin Panel
+## Watch this video:
 
-![Admin Panel](https://user-images.githubusercontent.com/63230349/115897023-68538180-a49f-11eb-973a-89090029593b.png)
-
-## User Panel
-
-![User Panel](https://user-images.githubusercontent.com/63230349/115897025-68ece800-a49f-11eb-9512-95220803538.png)
-
-## Payment History
+<a href="https://www.youtube.com/watch?v=X7vwxQ6Wlzc" target="_blank"><img src="https://img.youtube.com/vi/X7vwxQ6Wlzc/0.jpg" alt="Watch this video" width="640" height="360" border="10" /></a>
