@@ -42,11 +42,17 @@ $users = $stmt->fetchAll();
                     <td><?= htmlspecialchars($username) ?></td>
                     <td><?= htmlspecialchars($channelName) ?></td>
                     <td><a href="<?= htmlspecialchars($channelURL) ?>" target="_blank"><button type="button" class="btn btn-primary">Open</button></a></td>
-                    <td><a href="verify.php" target="_blank" ><button type="button" class="btn btn-secondary">Verify</button></a></td>
+                    <!-- <td><a href="verify.php" target="_blank" ><button type="button" class="btn btn-secondary">Verify</button></a></td> -->
+                    <td><a href="verify.php" onclick="setRedirectFlag()" target="_blank" ><button type="button" class="btn btn-secondary">Verify</button></a></td>
+                    
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
+<script>
+function setRedirectFlag() {
+    <?php $_SESSION['redirected_from_sub4sub'] = true; ?>
+}
+</script>
 <?php include 'functions/footer.php'; ?>
