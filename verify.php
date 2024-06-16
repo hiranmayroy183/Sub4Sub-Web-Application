@@ -76,5 +76,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 </div>
-<br><br><br>
+
 <?php include 'functions/footer.php'; ?>

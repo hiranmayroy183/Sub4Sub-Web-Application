@@ -106,14 +106,14 @@ $userProfile = isLoggedIn() ? getUserProfile($_SESSION['email']) : null;
                     <p>It is necessary to complete your account information to reach other people and get subscribed.</p>
                     <p>Please fill out the form below.</p>
             </div>
-<!-- 
+
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title">Update Account</h3>
                         <form id="updateAccountForm" action="" method="post">
             </div>
-        </div> -->
+        </div>
 
         <?php if ($message): ?>
             <div class="alert alert-<?php echo $messageType; ?>">
