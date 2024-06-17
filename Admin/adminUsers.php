@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch users
-$stmt = $pdo->query("SELECT email, username, youtube_channel_name, youtube_channel, location_address FROM users");
+$stmt = $pdo->query("SELECT email, username, full_name, youtube_channel_name, youtube_channel, location_address FROM users");
 $users = $stmt->fetchAll();
 
 ?>
@@ -129,6 +129,7 @@ $users = $stmt->fetchAll();
                 <tr>
                     <th>Email</th>
                     <th>Username</th>
+                    <th>Full Name</th>
                     <th>YouTube Channel Name</th>
                     <th>YouTube Channel URL</th>
                     <th>Location</th>
@@ -140,6 +141,7 @@ $users = $stmt->fetchAll();
                     <tr>
                         <td><?php echo htmlspecialchars($user['email']); ?></td>
                         <td><?php echo htmlspecialchars($user['username']); ?></td>
+                        <td><?php echo htmlspecialchars($user['full_name']); ?></td>
                         <td><?php echo htmlspecialchars($user['youtube_channel_name']); ?></td>
                         <td><?php echo htmlspecialchars($user['youtube_channel']); ?></td>
                         <td><?php echo htmlspecialchars($user['location_address']); ?></td>
@@ -203,6 +205,10 @@ $users = $stmt->fetchAll();
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
