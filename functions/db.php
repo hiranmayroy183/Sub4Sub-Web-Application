@@ -21,6 +21,7 @@ try {
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         email VARCHAR(255) NOT NULL UNIQUE,
+        username VARCHAR(100) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         full_name VARCHAR(100) NOT NULL,
         location_address VARCHAR(255) NOT NULL,
@@ -65,9 +66,6 @@ try {
     ";
 
     $pdo->exec($createUserUploadsTableSQL);
-
-    // Update existing table to add reverify column if it doesn't exist
-    $pdo->exec("ALTER TABLE user_uploads ADD COLUMN IF NOT EXISTS reverify BOOLEAN DEFAULT FALSE");
 
     // Create notifications table if it doesn't exist
     $createNotificationsTableSQL = "

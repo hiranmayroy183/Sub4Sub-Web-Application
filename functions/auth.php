@@ -19,7 +19,7 @@ function validateCsrfToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-function register($email, $password, $confirm_password, $youtube_channel_name) {
+function register($email, $password, $confirm_password, $username, $youtube_channel_name, $youtube_channel_url, $location_address) {
     global $pdo;
     if ($password !== $confirm_password) {
         return [false, "Passwords do not match."];
@@ -27,13 +27,13 @@ function register($email, $password, $confirm_password, $youtube_channel_name) {
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("INSERT INTO users (email, password, youtube_channel_name) VALUES (?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO users (email, password, username, youtube_channel_name, youtube_channel, location_address) VALUES (?, ?, ?, ?, ?, ?)");
     try {
-        $stmt->execute([$email, $hash, $youtube_channel_name]);
+        $stmt->execute([$email, $hash, $username, $youtube_channel_name, $youtube_channel_url, $location_address]);
         return [true, "Registration successful."];
     } catch (\PDOException $e) {
         if ($e->getCode() == 23000) { // Integrity constraint violation: 1062 Duplicate entry
-            return [false, "Email already registered."];
+            return [false, "Email or Username already registered."];
         } else {
             throw $e;
         }

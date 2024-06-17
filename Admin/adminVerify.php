@@ -12,8 +12,16 @@ if (!isAdminLoggedIn()) {
 
 function notifyUser($userId, $message) {
     global $pdo;
-    $stmt = $pdo->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
-    $stmt->execute([$userId, $message]);
+
+    // Check if the user exists before inserting a notification
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    if ($stmt->fetchColumn() > 0) {
+        $stmt = $pdo->prepare("INSERT INTO notifications (user_id, message) VALUES (?, ?)");
+        $stmt->execute([$userId, $message]);
+    } else {
+        throw new Exception("User ID $userId does not exist.");
+    }
 }
 
 $message = '';
@@ -26,50 +34,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $action = $_POST['action'];
         $uploadId = isset($_POST['upload_id']) ? $_POST['upload_id'] : null;
-        $userId = $_POST['user_id'];
+        $userId = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 
-        switch ($action) {
-            case 'validate':
-                if ($uploadId !== null) {
-                    $stmt = $pdo->prepare("UPDATE user_uploads SET validated = 1, reverify = 0 WHERE id = ?");
-                    $stmt->execute([$uploadId]);
-                    $message = 'User input validated successfully.';
+        if ($userId === null) {
+            $message = 'User ID is missing.';
+            $messageType = 'error';
+        } else {
+            switch ($action) {
+                case 'validate':
+                    if ($uploadId !== null) {
+                        $stmt = $pdo->prepare("UPDATE user_uploads SET validated = 1, reverify = 0 WHERE id = ?");
+                        $stmt->execute([$uploadId]);
+                        $message = 'User input validated successfully.';
+                        $messageType = 'success';
+                    }
+                    break;
+
+                case 'delete':
+                    if ($uploadId !== null) {
+                        $stmt = $pdo->prepare("DELETE FROM user_uploads WHERE id = ?");
+                        $stmt->execute([$uploadId]);
+                        notifyUser($userId, 'Your input has been deleted.');
+                        $message = 'User input deleted successfully.';
+                        $messageType = 'success';
+                    }
+                    break;
+
+                case 'ban':
+                    $stmt = $pdo->prepare("UPDATE users SET banned = 1 WHERE id = ?");
+                    $stmt->execute([$userId]);
+                    notifyUser($userId, 'Your account has been terminated.');
+                    $message = 'User banned successfully.';
                     $messageType = 'success';
-                }
-                break;
+                    break;
 
-            case 'delete':
-                if ($uploadId !== null) {
-                    $stmt = $pdo->prepare("DELETE FROM user_uploads WHERE id = ?");
-                    $stmt->execute([$uploadId]);
-                    notifyUser($userId, 'Your input has been deleted.');
-                    $message = 'User input deleted successfully.';
-                    $messageType = 'success';
-                }
-                break;
+                case 'review':
+                    if ($uploadId !== null) {
+                        $stmt = $pdo->prepare("UPDATE user_uploads SET reverify = 1 WHERE id = ?");
+                        $stmt->execute([$uploadId]);
+                        notifyUser($userId, 'Please verify your input again.');
+                        $message = 'Review requested successfully.';
+                        $messageType = 'success';
+                    }
+                    break;
 
-            case 'ban':
-                $stmt = $pdo->prepare("UPDATE users SET banned = 1 WHERE id = ?");
-                $stmt->execute([$userId]);
-                notifyUser($userId, 'Your account has been terminated.');
-                $message = 'User banned successfully.';
-                $messageType = 'success';
-                break;
-
-            case 'review':
-                if ($uploadId !== null) {
-                    $stmt = $pdo->prepare("UPDATE user_uploads SET reverify = 1 WHERE id = ?");
-                    $stmt->execute([$uploadId]);
-                    notifyUser($userId, 'Please verify your input again.');
-                    $message = 'Review requested successfully.';
-                    $messageType = 'success';
-                }
-                break;
-
-            default:
-                $message = 'Invalid action.';
-                $messageType = 'error';
-                break;
+                default:
+                    $message = 'Invalid action.';
+                    $messageType = 'error';
+                    break;
+            }
         }
     }
 }
