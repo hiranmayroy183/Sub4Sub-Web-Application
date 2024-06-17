@@ -29,12 +29,10 @@ All you have to do is
 
 ## Admin Panel Login:
 - Username: admin
-- Password: admin123
+- Password: password
 
 ## User Panel Login:
-- Username: user2@gmail.com
-- Password: newpassword
-
+- Create an account then test
 # Preview
 
 ## Watch this video:
