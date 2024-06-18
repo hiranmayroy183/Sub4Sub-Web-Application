@@ -1,6 +1,7 @@
 <?php 
 include 'functions/header.php'; 
 include 'functions/auth.php'; 
+include 'functions/db.php';  // Include the database connection
 
 // Check if the user is logged in and their account is terminated
 if (isLoggedIn() && isAccountTerminated($_SESSION['user_id'])) {
@@ -111,7 +112,17 @@ if (isLoggedIn()) {
     $stmt->execute([$_SESSION['user_id']]);
     $notifications = $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
+
+// Fetch verified subscriptions for the logged-in user
+function fetchVerifiedSubscriptions($userId, $pdo) {
+    $stmt = $pdo->prepare("SELECT youtube_channel_link FROM user_uploads WHERE user_id = ? AND validated = TRUE LIMIT 20");
+    $stmt->execute([$userId]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
+$verifiedSubscriptions = isLoggedIn() ? fetchVerifiedSubscriptions($_SESSION['user_id'], $pdo) : [];
 ?>
+
 <div class="container">
     <?php if (isLoggedIn()): ?>
         <div class="row mt-5">
@@ -192,8 +203,8 @@ if (isLoggedIn()) {
                             <form id="subscriptionVerificationForm" action="" method="post">
                                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                 <div class="mb-3">
-                                    <label for="subscriptionVerificationUrls" class="form-label">Verify Your Subscriptions:</label>
-                                    <textarea readonly class="form-control" id="subscriptionVerificationUrls" name="subscription_verification_urls" rows="4" placeholder="The channels you subscribed to were found to be genuine."><?php echo htmlspecialchars(isset($userProfile['subscription_urls']) ? implode("\n", json_decode($userProfile['subscription_urls'], true)) : ''); ?></textarea>
+                                    <label for="subscriptionVerificationUrls" class="form-label">Verified Subscriptions:</label>
+                                    <textarea readonly class="form-control" id="subscriptionVerificationUrls" name="subscription_verification_urls" rows="4" placeholder="The channels you subscribed to were found to be genuine."><?php echo htmlspecialchars(implode("\n", $verifiedSubscriptions)); ?></textarea>
                                 </div>
                             </form>
                         </div>
@@ -387,13 +398,3 @@ if (isLoggedIn()) {
     </script>
 
 <?php include 'functions/footer.php'; ?>
-
-<?php
-// Function to check if the account is terminated
-// function isAccountTerminated($user_id) {
-//     global $pdo;
-//     $stmt = $pdo->prepare("SELECT is_terminated FROM users WHERE id = ?");
-//     $stmt->execute([$user_id]);
-//     return $stmt->fetchColumn() == 1;
-// }
-?>
