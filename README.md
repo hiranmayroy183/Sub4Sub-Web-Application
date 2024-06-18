@@ -5,7 +5,14 @@ A "sub4sub" website is a platform where users exchange subscriptions (subs) for 
 
 # What is the purpose of this project?
 
-The purpose of this project is to create a simple and easy to use Sub4Sub Web Application.
+The purpose of this project is to create a simple and easy to use Sub4Sub Web Application, but has some premium quality features.
+
+
+Note: This is just begging of an era, wait and see what we do 🤓💡😎🧠
+# How does it work?
+
+1. User A creates a subscription for User B
+2. User B creates a subscription for User A
 
 # How to run this project?
 
