@@ -2,6 +2,18 @@
 include 'functions/header.php'; 
 include 'functions/auth.php'; 
 
+// Check if the user is logged in and their account is terminated
+if (isLoggedIn() && isAccountTerminated($_SESSION['user_id'])) {
+    echo '<div class="container">';
+    echo '<div class="alert alert-danger">Your account has been terminated. You can <a href="contact.php" target="_blank">contact us</a> for more details.</div>';
+    echo '
+    <form action="functions/logout.php" method="post">
+    <button type="submit" class="btn btn-danger">Logout</button>
+    </form>';
+    echo '</div>';
+    exit;
+}
+
 $message = '';
 $messageType = '';
 
@@ -119,27 +131,11 @@ if (isLoggedIn()) {
             </div>
 
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="card-title">Update Account</h3>
-                        <form id="updateAccountForm" action="" method="post">
-                    </div>
-                </div>
+                
 
             <?php if ($message): ?>
                 <div class="alert alert-<?php echo $messageType; ?>">
                     <?php echo $message; ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($notifications): ?>
-                <div class="alert alert-info">
-                    <h4 class="alert-heading">Notifications</h4>
-                    <ul>
-                        <?php foreach ($notifications as $notification): ?>
-                            <li><?php echo htmlspecialchars($notification); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
                 </div>
             <?php endif; ?>
 
@@ -202,15 +198,25 @@ if (isLoggedIn()) {
                             </form>
                         </div>
                     </div>
+                    
+            <?php if ($notifications): ?>
+                <div class="alert alert-info">
+    <h4 class="alert-heading">Notifications</h4>
+    <ul>
+        <?php foreach ($notifications as $notification): ?>
+            <li><?php echo htmlspecialchars($notification); ?></li>
+        <?php endforeach; ?>
+    </ul>
+    <br>
+    <p>
+        <a href="notification.php" target="_blank" class="btn btn-primary btn-sm">View all</a>
+    </p>
+</div>
+
+            <?php endif; ?>
+
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <h4 class="text-center">Notifications!</h4>
-                        <div class="card-body">
-                            {Show notifications here!}
-                        </div>
-                    </div>
-                </div>
+                
  
             </div>
 
@@ -381,3 +387,13 @@ if (isLoggedIn()) {
     </script>
 
 <?php include 'functions/footer.php'; ?>
+
+<?php
+// Function to check if the account is terminated
+// function isAccountTerminated($user_id) {
+//     global $pdo;
+//     $stmt = $pdo->prepare("SELECT is_terminated FROM users WHERE id = ?");
+//     $stmt->execute([$user_id]);
+//     return $stmt->fetchColumn() == 1;
+// }
+?>

@@ -126,4 +126,11 @@ function getUserNotifications($user_id) {
     $stmt->execute([$user_id]);
     return $stmt->fetchAll();
 }
+
+function isAccountTerminated($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT banned FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    return $stmt->fetchColumn() == 1;
+}
 ?>
