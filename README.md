@@ -1,16 +1,22 @@
 # Sub4Sub Web Application
- This is a basic Sub4Sub Web Application made with PHP and MySQL database by Hiranmay Roy
+This is a fully open-source advanced Sub4Sub Web Application made with PHP and MySQL database by Hiranmay Roy and Sameer Pathak.
+
+A "sub4sub" website is a platform where users exchange subscriptions (subs) for their YouTube channels with each other. The idea is that if you subscribe to someone else's channel, they will subscribe to yours in return. It's often used to artificially boost subscriber counts.
+
+# What is the purpose of this project?
+
+The purpose of this project is to create a simple and easy to use Sub4Sub Web Application.
 
 # How to run this project?
 
-All you have to do is 
+All you have to do is:
 
 1. Clone this repository
 2. Open the project in your favorite IDE
-3. Create a database named `sub4sub` and create a database named `sub4sub`
+3. Create a database named `sub4sub`
 4. Update the `config.php` file with your database credentials
 5. Run the project
-6. You must have to install <b>Xampp</b> or <b>Wamp</b> local server to run this project perfectly.
+6. You must have to install <b>Xampp</b> or <b>Wampserver</b> on your machine to run this project perfectly.
 7. Boom 🔥🔥
 
 # Features
@@ -19,7 +25,12 @@ All you have to do is
 - [✔️] User Registration
 - [✔️] User Profile
 - [✔️] Admin Panel
-- [x] Sub4Sub Management
+    - User management (Create, Edit, Delete, View)
+    - User submission management (Create, Edit, Delete, View)
+    - Dynamic Content Edit (View, Privacy, TOS, About, Contact)
+- [✔️] Sub4Sub Management
+
+# {Currently in progress}
 - [x] Payment Management
 - [x] Payment History
 - [x] Payment Cancellation
