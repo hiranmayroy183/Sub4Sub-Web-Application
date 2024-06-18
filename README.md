@@ -7,7 +7,7 @@ All you have to do is
 
 1. Clone this repository
 2. Open the project in your favorite IDE
-3. Create a database named `sub4sub` and import the `sub4sub.sql` file
+3. Create a database named `sub4sub` and create a database named `sub4sub`
 4. Update the `config.php` file with your database credentials
 5. Run the project
 6. You must have to install <b>Xampp</b> or <b>Wamp</b> local server to run this project perfectly.

@@ -40,48 +40,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $message = 'User ID is missing.';
             $messageType = 'error';
         } else {
-            switch ($action) {
-                case 'validate':
-                    if ($uploadId !== null) {
-                        $stmt = $pdo->prepare("UPDATE user_uploads SET validated = 1, reverify = 0 WHERE id = ?");
-                        $stmt->execute([$uploadId]);
-                        $message = 'User input validated successfully.';
+            try {
+                switch ($action) {
+                    case 'validate':
+                        if ($uploadId !== null) {
+                            $stmt = $pdo->prepare("UPDATE user_uploads SET validated = 1, reverify = 0 WHERE id = ?");
+                            $stmt->execute([$uploadId]);
+                            notifyUser($userId, 'Your input has been validated.');
+                            $message = 'User input validated successfully.';
+                            $messageType = 'success';
+                        }
+                        break;
+
+                    case 'delete':
+                        if ($uploadId !== null) {
+                            $stmt = $pdo->prepare("DELETE FROM user_uploads WHERE id = ?");
+                            $stmt->execute([$uploadId]);
+                            notifyUser($userId, 'Your input has been deleted.');
+                            $message = 'User input deleted successfully.';
+                            $messageType = 'success';
+                        }
+                        break;
+
+                    case 'ban':
+                        $stmt = $pdo->prepare("UPDATE users SET banned = 1 WHERE id = ?");
+                        $stmt->execute([$userId]);
+                        notifyUser($userId, 'Your account has been terminated.');
+                        $message = 'User banned successfully.';
                         $messageType = 'success';
-                    }
-                    break;
+                        break;
 
-                case 'delete':
-                    if ($uploadId !== null) {
-                        $stmt = $pdo->prepare("DELETE FROM user_uploads WHERE id = ?");
-                        $stmt->execute([$uploadId]);
-                        notifyUser($userId, 'Your input has been deleted.');
-                        $message = 'User input deleted successfully.';
-                        $messageType = 'success';
-                    }
-                    break;
+                    case 'review':
+                        if ($uploadId !== null) {
+                            $stmt = $pdo->prepare("UPDATE user_uploads SET reverify = 1 WHERE id = ?");
+                            $stmt->execute([$uploadId]);
+                            notifyUser($userId, 'Please verify your input again.');
+                            $message = 'Review requested successfully.';
+                            $messageType = 'success';
+                        }
+                        break;
 
-                case 'ban':
-                    $stmt = $pdo->prepare("UPDATE users SET banned = 1 WHERE id = ?");
-                    $stmt->execute([$userId]);
-                    notifyUser($userId, 'Your account has been terminated.');
-                    $message = 'User banned successfully.';
-                    $messageType = 'success';
-                    break;
-
-                case 'review':
-                    if ($uploadId !== null) {
-                        $stmt = $pdo->prepare("UPDATE user_uploads SET reverify = 1 WHERE id = ?");
-                        $stmt->execute([$uploadId]);
-                        notifyUser($userId, 'Please verify your input again.');
-                        $message = 'Review requested successfully.';
-                        $messageType = 'success';
-                    }
-                    break;
-
-                default:
-                    $message = 'Invalid action.';
-                    $messageType = 'error';
-                    break;
+                    default:
+                        $message = 'Invalid action.';
+                        $messageType = 'error';
+                        break;
+                }
+            } catch (Exception $e) {
+                $message = $e->getMessage();
+                $messageType = 'error';
             }
         }
     }
@@ -120,27 +126,27 @@ $uploads = $stmt->fetchAll();
                         <form action="adminVerify.php" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <input type="hidden" name="upload_id" value="<?php echo $upload['upload_id']; ?>">
-                            <input type="hidden" name="user_id" value="<?php echo $upload['user_id']; ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $upload['id']; ?>">
                             <input type="hidden" name="action" value="validate">
                             <button type="submit" class="btn btn-success">Validate</button>
                         </form>
                         <form action="adminVerify.php" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <input type="hidden" name="upload_id" value="<?php echo $upload['upload_id']; ?>">
-                            <input type="hidden" name="user_id" value="<?php echo $upload['user_id']; ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $upload['id']; ?>">
                             <input type="hidden" name="action" value="delete">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
                         <form action="adminVerify.php" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                            <input type="hidden" name="user_id" value="<?php echo $upload['user_id']; ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $upload['id']; ?>">
                             <input type="hidden" name="action" value="ban">
                             <button type="submit" class="btn btn-warning">Ban</button>
                         </form>
                         <form action="adminVerify.php" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <input type="hidden" name="upload_id" value="<?php echo $upload['upload_id']; ?>">
-                            <input type="hidden" name="user_id" value="<?php echo $upload['user_id']; ?>">
+                            <input type="hidden" name="user_id" value="<?php echo $upload['id']; ?>">
                             <input type="hidden" name="action" value="review">
                             <button type="submit" class="btn btn-info">Review</button>
                         </form>

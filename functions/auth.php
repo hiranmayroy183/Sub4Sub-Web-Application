@@ -119,4 +119,11 @@ function getUserProfile($email) {
     return $stmt->fetch();
 }
 
+function getUserNotifications($user_id) {
+    global $pdo;
+
+    $stmt = $pdo->prepare("SELECT message, created_at FROM notifications WHERE user_id = ? ORDER BY created_at DESC");
+    $stmt->execute([$user_id]);
+    return $stmt->fetchAll();
+}
 ?>
