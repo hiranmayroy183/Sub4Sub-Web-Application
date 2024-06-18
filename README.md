@@ -55,4 +55,4 @@ All you have to do is:
 
 ## Watch this video:
 
-<a href="https://www.youtube.com/watch?v=X7vwxQ6Wlzc" target="_blank"><img src="https://img.youtube.com/vi/X7vwxQ6Wlzc/0.jpg" alt="Watch this video" width="640" height="360" border="10" /></a>
+<a href="https://youtu.be/mmb-ER3pNvw" target="_blank"><img src="https://i.ibb.co/K9pF8Qb/sddefault.jpg" alt="Watch this video" width="640" height="360" border="10" /></a>
