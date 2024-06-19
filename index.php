@@ -1,7 +1,5 @@
 <?php include 'functions/header.php' ?>
 
-
-
 <div class="pg-lib-item-box" data-pgc-field="component">
                     <section class="bg-light pg-lib-item pt-5 text-secondary">
                         <div class="container pt-5 pt-lg-0">
@@ -360,6 +358,159 @@
                     </section>
                 </div>
 
+<!-- Pricing -->
 
+
+<style>
+    body{margin-top:20px;}
+.pricing-box {
+  -webkit-box-shadow: 0px 5px 30px -10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0px 5px 30px -10px rgba(0, 0, 0, 0.1);
+  padding: 35px 50px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.pricing-box .plan {
+  font-size: 34px;
+}
+
+.pricing-badge {
+  position: absolute;
+  top: 0;
+  z-index: 999;
+  right: 0;
+  width: 100%;
+  display: block;
+  font-size: 15px;
+  padding: 0;
+  overflow: hidden;
+  height: 100px;
+}
+
+.pricing-badge .badge {
+  float: right;
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+  right: -67px;
+  top: 17px;
+  position: relative;
+  text-align: center;
+  width: 200px;
+  font-size: 13px;
+  margin: 0;
+  padding: 7px 10px;
+  font-weight: 500;
+  color: #ffffff;
+  background: #fb7179;
+}
+.mb-2, .my-2 {
+    margin-bottom: .5rem!important;
+}
+p {
+    line-height: 1.7;
+}
+
+
+</style>
+
+
+<section class="section" id="pricing">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="title-box text-center">
+                    <h3 class="title-heading mt-4">Best Pricing Package </h3>
+                    <p class="text-muted f-17 mt-3">If you want to increase your subscription limit, then you must choose a premium package. Do you have no idea where to begin? You can have the Starter Pack ready to go. Next, increase the scale!</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-5 pt-4">
+            <div class="col-lg-4">
+                <div class="pricing-box mt-4">
+                    <i class="mdi mdi-account h1"></i>
+                    <h4 class="f-20">Starter</h4>
+
+                    <div class="mt-4 pt-2">
+                        <p class="mb-2 f-18">Features</p>
+
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>20 Channels Everyday</b></p>
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>1 GB</b> storage on RDN Image Hosting</p>
+                        <p class="mb-2"><i class="mdi mdi-close-circle text-danger f-18 mr-2"></i><del>Access to RDN Drive</del>
+                        </p>
+                    </div>
+
+                    <div class="pricing-plan mt-4 pt-2">
+                        <h4 class="text-muted"><s> $9.99</s> <span class="plan pl-3 text-dark">$5.99 </span>/Month</h4>
+                    </div>
+
+
+                    <div class="mt-4 pt-3">
+                        <a href="" class="btn btn-primary btn-rounded">Purchase Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="pricing-box mt-4">
+                    <div class="pricing-badge">
+                        <span class="badge">Featured</span>
+                    </div>
+
+                    <i class="mdi mdi-account-multiple h1 text-primary"></i>
+                    <h4 class="f-20 text-primary">Personal</h4>
+
+
+                    <div class="mt-4 pt-2">
+                        <p class="mb-2 f-18">Features</p>
+
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>40</b>
+                        Channels Everyday</p>
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>2 GB</b>
+                        storage on RDN Image Hosting</p>
+                        <p class="mb-2"><i class="mdi mdi-close-circle text-danger f-18 mr-2"></i>Access to <b>RDN Drive</b></p>
+                    </div>
+
+                    <div class="pricing-plan mt-4 pt-2">
+                        <h4 class="text-muted"><s> $19.99</s> <span class="plan pl-3 text-dark">$9.99 </span>/Month</h4>
+                    </div>
+
+                    <div class="mt-4 pt-3">
+                        <a href="" class="btn btn-primary btn-rounded">Purchase Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="pricing-box mt-4">
+                    <i class="mdi mdi-account-multiple-plus h1"></i>
+                    <h4 class="f-20">Ultimate</h4>
+
+
+                    <div class="mt-4 pt-2">
+                        <p class="mb-2 f-18">Features</p>
+
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>100</b>
+                        Channels Everyday</p>
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b>
+                        storage on RDN Image Hosting</p>
+                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b> Storage to RDN Drive</p>
+                    </div>
+
+                    <div class="pricing-plan mt-4 pt-2">
+                        <h4 class="text-muted"><s> $29.99</s> <span class="plan pl-3 text-dark">$19.99 </span>/Month</h4>
+                    </div>
+
+                    <div class="mt-4 pt-3">
+                        <a href="purchase.php" class="btn btn-primary btn-rounded">Purchase Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <?php include 'functions/footer.php' ?>

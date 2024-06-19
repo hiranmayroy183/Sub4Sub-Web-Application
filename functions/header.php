@@ -19,6 +19,20 @@ function isAdminLoggedIn() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUB4SUB - Get Unlimited Subscriber to your channel ASAP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/mRjQ4qc/growth.png">
+
+    <!-- SEO Codes-->
+
+    <meta name="title" content="SUB4SUB - Get Unlimited Subscriber to your channel ASAP">
+    <meta name="description" content="SUB4SUB Get Unlimited Subscribers to your YouTube channel ASAP for free. Share your channel to get more subscribers Completely free and safe!">
+    <meta name="keywords" content="sub4sub, free youtube views,free youtube subscribers, youtube subs, yt sub">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="English">
+    <meta name="author" content="Hiranmay Roy">
+
+
 </head>
 <body>
     <div class="container">
