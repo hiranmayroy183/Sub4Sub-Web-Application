@@ -44,6 +44,7 @@ All you have to do is:
 
 
 # Demo Account
+Visit: <a href="https://pathaksameer.com.np/account.php" target="_blank">Here</a>
 
 ## Admin Panel Login:
 - Username: admin
