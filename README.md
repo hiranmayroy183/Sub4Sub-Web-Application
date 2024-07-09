@@ -38,7 +38,7 @@ All you have to do is:
 - [✔️] Sub4Sub Management
 
 # {Currently in progress}
-- [x] Payment Management
+- [✔️] Payment Management
 - [x] Payment History
 - [x] Payment Cancellation
 
