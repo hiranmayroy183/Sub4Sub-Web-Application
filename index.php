@@ -414,19 +414,19 @@ p {
 
 </style>
 
-
 <section class="section" id="pricing">
     <div class="container">
-
         <div class="row">
             <div class="col-lg-12">
                 <div class="title-box text-center">
                     <h3 class="title-heading mt-4">Best Pricing Package </h3>
-                    <p class="text-muted f-17 mt-3">If you want to increase your subscription limit, then you must choose a premium package. Do you have no idea where to begin? You can have the Starter Pack ready to go. Next, increase the scale!</p>
+                    <p class="text-muted f-17 mt-3">
+                        If you want to increase your subscription limit, then you must choose a premium package.
+                        Do you have no idea where to begin? You can have the Starter Pack ready to go. Next, increase the scale!
+                    </p>
                 </div>
             </div>
         </div>
-
 
         <div class="row mt-5 pt-4">
             <div class="col-lg-4">
@@ -436,20 +436,23 @@ p {
 
                     <div class="mt-4 pt-2">
                         <p class="mb-2 f-18">Features</p>
-
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>20 Channels Everyday</b></p>
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>1 GB</b> storage on RDN Image Hosting</p>
-                        <p class="mb-2"><i class="mdi mdi-close-circle text-danger f-18 mr-2"></i><del>Access to RDN Drive</del>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>20 Channels Everyday</b>
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>1 GB</b> storage on RDN Image Hosting
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-close-circle text-danger f-18 mr-2"></i><del>Access to RDN Drive</del>
                         </p>
                     </div>
 
                     <div class="pricing-plan mt-4 pt-2">
-                        <h4 class="text-muted"><s> $9.99</s> <span class="plan pl-3 text-dark">$5.99 </span>/Month</h4>
+                        <h4 class="text-muted"><s>$9.99</s> <span class="plan pl-3 text-dark">$5.99 </span>/Month</h4>
                     </div>
 
-
                     <div class="mt-4 pt-3">
-                        <a href="" class="btn btn-primary btn-rounded">Purchase Now</a>
+                        <a href="purchase.php?package=starter" id="starter-package" class="btn btn-primary btn-rounded">Purchase Now</a>
                     </div>
                 </div>
             </div>
@@ -463,23 +466,25 @@ p {
                     <i class="mdi mdi-account-multiple h1 text-primary"></i>
                     <h4 class="f-20 text-primary">Personal</h4>
 
-
                     <div class="mt-4 pt-2">
                         <p class="mb-2 f-18">Features</p>
-
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>40</b>
-                        Channels Everyday</p>
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>2 GB</b>
-                        storage on RDN Image Hosting</p>
-                        <p class="mb-2"><i class="mdi mdi-close-circle text-danger f-18 mr-2"></i>Access to <b>RDN Drive</b></p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>40</b> Channels Everyday
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>2 GB</b> storage on RDN Image Hosting
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-close-circle text-danger f-18 mr-2"></i>Access to <b>RDN Drive</b>
+                        </p>
                     </div>
 
                     <div class="pricing-plan mt-4 pt-2">
-                        <h4 class="text-muted"><s> $19.99</s> <span class="plan pl-3 text-dark">$9.99 </span>/Month</h4>
+                        <h4 class="text-muted"><s>$19.99</s> <span class="plan pl-3 text-dark">$9.99 </span>/Month</h4>
                     </div>
 
                     <div class="mt-4 pt-3">
-                        <a href="" class="btn btn-primary btn-rounded">Purchase Now</a>
+                        <a href="purchase.php?package=personal" id="personal-package" class="btn btn-primary btn-rounded">Purchase Now</a>
                     </div>
                 </div>
             </div>
@@ -489,23 +494,25 @@ p {
                     <i class="mdi mdi-account-multiple-plus h1"></i>
                     <h4 class="f-20">Ultimate</h4>
 
-
                     <div class="mt-4 pt-2">
                         <p class="mb-2 f-18">Features</p>
-
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>100</b>
-                        Channels Everyday</p>
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b>
-                        storage on RDN Image Hosting</p>
-                        <p class="mb-2"><i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b> Storage to RDN Drive</p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>100</b> Channels Everyday
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b> storage on RDN Image Hosting
+                        </p>
+                        <p class="mb-2">
+                            <i class="mdi mdi-checkbox-marked-circle text-success f-18 mr-2"></i><b>10 GB</b> Storage to RDN Drive
+                        </p>
                     </div>
 
                     <div class="pricing-plan mt-4 pt-2">
-                        <h4 class="text-muted"><s> $29.99</s> <span class="plan pl-3 text-dark">$19.99 </span>/Month</h4>
+                        <h4 class="text-muted"><s>$29.99</s> <span class="plan pl-3 text-dark">$19.99 </span>/Month</h4>
                     </div>
 
                     <div class="mt-4 pt-3">
-                        <a href="purchase.php" class="btn btn-primary btn-rounded">Purchase Now</a>
+                        <a href="purchase.php?package=ultimate" id="ultimate-package" class="btn btn-primary btn-rounded">Purchase Now</a>
                     </div>
                 </div>
             </div>

@@ -67,6 +67,7 @@ $currentUsername = $stmt->fetchColumn();
                     <li><a href="adminPrivacy.php">Edit Privacy Policy</a></li>
                     <li><a href="adminVerify.php">Edit Verify</a></li>
                     <li><a href="adminUsers.php">Edit Users</a></li>
+                    <li><a href="adminPayment.php">Check Payments</a></li>
                 </ul>
             </div>
             <div class="col-md-6">

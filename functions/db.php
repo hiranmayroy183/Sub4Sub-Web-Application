@@ -182,6 +182,28 @@ try {
 
     $pdo->exec($createAdminTableSQL);
 
+    // Create purchase_requests table if it doesn't exist
+    $createPurchaseRequestsTableSQL = "
+    CREATE TABLE IF NOT EXISTS purchase_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        package VARCHAR(50) NOT NULL,
+        message TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        replied BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    ) ENGINE=INNODB;
+    ";
+
+    $pdo->exec($createPurchaseRequestsTableSQL);
+
+    $addRepliedColumnSQL = "
+ALTER TABLE purchase_requests 
+ADD COLUMN IF NOT EXISTS replied BOOLEAN DEFAULT FALSE;
+";
+$pdo->exec($addRepliedColumnSQL);
+
+
     // Insert initial admin user if not exists
     $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
     if ($stmt->fetchColumn() == 0) {
