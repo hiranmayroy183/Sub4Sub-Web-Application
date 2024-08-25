@@ -26,6 +26,7 @@ All you have to do is:
 6. You must have to install <b>Xampp</b> or <b>Wampserver</b> on your machine to run this project perfectly.
 7. Boom 🔥🔥
 
+
 # Features
 
 - [✔️] User Authentication
@@ -36,11 +37,31 @@ All you have to do is:
     - User submission management (Create, Edit, Delete, View)
     - Dynamic Content Edit (View, Privacy, TOS, About, Contact)
 - [✔️] Sub4Sub Management
-
-# {Currently in progress}
 - [✔️] Payment Management
+
+
+# {Upcoming Features}
+
 - [x] Payment History
 - [x] Payment Cancellation
+- [x] Admin Notification Controls
+  - Manage user notifications with ease.
+- [x] Send Notifications
+  - Dispatch notifications (of all types) to individual users or groups.
+- [x] Notification Icon & Page
+  - Access notifications through an icon in the top right corner, with a dedicated notification page.
+- [x] Admin Role Assignment & Premium Status
+  - Grant admin roles from the users page or upgrade users to premium by selecting checkboxes.
+- [x] Admin Export Functionality
+  - Allow admins to export data in both CSV and PDF formats simultaneously.
+    - All users.
+    - Filtered premium users.
+    - Payment details
+- [x] Limits
+  - Set a number of channels to be subscribed
+    - For free users
+    - For Specific Users
+    - For a group of users
 
 
 # Demo Account
