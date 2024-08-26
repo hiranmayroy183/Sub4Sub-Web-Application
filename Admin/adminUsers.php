@@ -196,42 +196,48 @@ $users = $stmt->fetchAll();
             </form>
         <?php else: ?>
             <h2>Add User</h2>
-            <form action="adminUsers.php" method="post">
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="full_name" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="full_name" name="full_name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="confirm_password" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="youtube_channel_name" class="form-label">YouTube Channel Name</label>
-                    <input type="text" class="form-control" id="youtube_channel_name" name="youtube_channel_name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="youtube_channel_url" class="form-label">YouTube Channel URL</label>
-                    <input type="text" class="form-control" id="youtube_channel_url" name="youtube_channel_url" required>
-                </div>
-                <div class="mb-3">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" class="form-control" id="location" name="location" required>
-                </div>
-                <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
-            </form>
+
+            <form class="w-75 p-3" action="adminUsers.php" method="post">
+    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="full_name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="youtube_channel_name" class="form-label">YouTube Channel Name</label>
+            <input type="text" class="form-control" id="youtube_channel_name" name="youtube_channel_name" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="youtube_channel_url" class="form-label">YouTube Channel URL</label>
+            <input type="text" class="form-control" id="youtube_channel_url" name="youtube_channel_url" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+        </div>
+        <div class="col-md-6 mb-3 d-flex align-items-end">
+            <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
+        </div>
+    </div>
+</form>
+
         <?php endif; ?>
     </div>
 </body>
